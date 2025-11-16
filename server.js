@@ -56,4 +56,3 @@ app.post("/asla", async (req, res) => {
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log("ASLA API ativa na porta " + PORT));
 console.log("VERSAO EXECUTADA: ASLA-BUILD-77");
-
