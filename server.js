@@ -6,9 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// =====================
-// Debug Route
-// =====================
+// Debug
 app.get("/debug", (req, res) => {
   res.json({
     GROQ_KEY: process.env.GROQ_KEY ? "OK" : "MISSING",
@@ -16,57 +14,52 @@ app.get("/debug", (req, res) => {
   });
 });
 
-// =====================
-// Groq Client
-// =====================
+// Groq client
 const groq = new Groq({
   apiKey: process.env.GROQ_KEY
 });
 
-// =====================
-// ASLA Chat Route (FINAL VERSION)
-// =====================
+// ASLA ROUTE — usando modelo atualizado da Groq
 app.post("/asla", async (req, res) => {
   try {
     const userMessage = req.body.message || "";
 
     const completion = await groq.chat.completions.create({
-      model: "llama3-8b-8192",   // MODELO ATUAL, SUPORTADO, FUNCIONA!
+      model: "llama-3.1-8b-instant", // MODELO NOVO E ATIVO
       messages: [
         {
           role: "system",
           content:
-            "Você é ASLA, a assistente corporativa da Ascendant. Sempre responda com clareza, objetividade e profissionalismo."
+            "Você é ASLA, assistente corporativa da Ascendant. Seja objetiva, clara e profissional."
         },
         {
           role: "user",
           content: userMessage
         }
       ],
-      temperature: 0.5,
-      max_tokens: 300
+      max_tokens: 250,
+      temperature: 0.5
     });
 
-    const reply = completion.choices[0].message.content;
-    return res.json({ reply });
+    res.json({
+      reply: completion.choices[0].message.content
+    });
 
   } catch (error) {
     console.error("======== ERRO GROQ REAL ========");
     console.error(error);
     console.error("================================");
 
-    return res.json({
+    res.json({
       reply: "Erro ao processar a ASLA.",
       error: String(error)
     });
   }
 });
 
-// =====================
-// Porta dinâmica (Render)
-// =====================
+// Porta Render
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("ASLA API ativa na porta " + PORT);
-  console.log("VERSAO EXECUTADA: ASLA-BUILD-FINAL-100%");
+  console.log("VERSAO EXECUTADA: ASLA-BUILD-FINAL-200%");
 });
