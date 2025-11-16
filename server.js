@@ -6,12 +6,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- Groq client ---
+// DEBUG ROUTE
+app.get("/debug", (req, res) => {
+  res.json({
+    GROQ_KEY: process.env.GROQ_KEY ? "OK" : "MISSING",
+    PORT: process.env.PORT
+  });
+});
+
+// Groq client
 const groq = new Groq({
   apiKey: process.env.GROQ_KEY
 });
 
-// --- Rota da ASLA ---
+// ASLA route
 app.post("/asla", async (req, res) => {
   try {
     const userMessage = req.body.message || "";
@@ -19,29 +27,21 @@ app.post("/asla", async (req, res) => {
     const completion = await groq.chat.completions.create({
       model: "llama3-8b-8192",
       messages: [
-        {
-          role: "system",
-          content:
-            "Você é a ASLA, assistente corporativa da Ascendant. Seja objetiva, profissional, educada e eficaz."
-        },
+        { role: "system", content: "Você é a ASLA, assistente corporativa da Ascendant." },
         { role: "user", content: userMessage }
       ],
       temperature: 0.6,
       max_tokens: 300
     });
 
-    const reply = completion.choices[0].message.content;
-
-    res.json({ reply });
+    res.json({ reply: completion.choices[0].message.content });
 
   } catch (err) {
-    console.error("ERRO NA ASLA:", err);
+    console.error("ASLA ERRO:", err);
     res.json({ reply: "Erro ao processar a ASLA." });
   }
 });
 
-// --- Porta dinâmica Render ---
+// Render dynamic port
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log("ASLA API rodando na porta " + PORT);
-});
+app.listen(PORT, () => console.log("ASLA API ativa na porta " + PORT));
