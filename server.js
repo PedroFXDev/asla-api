@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json());
 
 // =====================
-// DEBUG ROUTE
+// Debug Route
 // =====================
 app.get("/debug", (req, res) => {
   res.json({
@@ -17,37 +17,38 @@ app.get("/debug", (req, res) => {
 });
 
 // =====================
-// GROQ CLIENT
+// Groq Client
 // =====================
 const groq = new Groq({
   apiKey: process.env.GROQ_KEY
 });
 
 // =====================
-// ASLA CHAT ROUTE (DEBUG MODE)
+// ASLA Chat Route (FINAL VERSION)
 // =====================
 app.post("/asla", async (req, res) => {
   try {
     const userMessage = req.body.message || "";
 
     const completion = await groq.chat.completions.create({
-      model: "llama3-70b-8192",
+      model: "llama3-8b-8192",   // MODELO ATUAL, SUPORTADO, FUNCIONA!
       messages: [
         {
           role: "system",
           content:
-            "Você é ASLA, assistente corporativa da Ascendant. Seja clara, objetiva e profissional."
+            "Você é ASLA, a assistente corporativa da Ascendant. Sempre responda com clareza, objetividade e profissionalismo."
         },
         {
           role: "user",
           content: userMessage
         }
-      ]
+      ],
+      temperature: 0.5,
+      max_tokens: 300
     });
 
-    return res.json({
-      reply: completion.choices[0].message.content
-    });
+    const reply = completion.choices[0].message.content;
+    return res.json({ reply });
 
   } catch (error) {
     console.error("======== ERRO GROQ REAL ========");
@@ -56,16 +57,16 @@ app.post("/asla", async (req, res) => {
 
     return res.json({
       reply: "Erro ao processar a ASLA.",
-      error: String(error)  // <-- retorna o erro real
+      error: String(error)
     });
   }
 });
 
 // =====================
-// RENDER PORT
+// Porta dinâmica (Render)
 // =====================
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("ASLA API ativa na porta " + PORT);
-  console.log("VERSAO EXECUTADA: ASLA-BUILD-DEBUG-FINAL");
+  console.log("VERSAO EXECUTADA: ASLA-BUILD-FINAL-100%");
 });
