@@ -6,7 +6,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// =====================
 // DEBUG ROUTE
+// =====================
 app.get("/debug", (req, res) => {
   res.json({
     GROQ_KEY: process.env.GROQ_KEY ? "OK" : "MISSING",
@@ -14,45 +16,56 @@ app.get("/debug", (req, res) => {
   });
 });
 
-// Groq client
+// =====================
+// GROQ CLIENT
+// =====================
 const groq = new Groq({
   apiKey: process.env.GROQ_KEY
 });
 
-// ASLA route
+// =====================
+// ASLA CHAT ROUTE (DEBUG MODE)
+// =====================
 app.post("/asla", async (req, res) => {
   try {
     const userMessage = req.body.message || "";
 
-   const completion = await groq.chat.completions.create({
-  model: "llama3-8b-8192",
-  messages: [
-    {
-      role: "system",
-      content:
-        "Você é ASLA, a assistente operacional da Ascendant. Responda de forma profissional e clara."
-    },
-    {
-      role: "user",
-      content: userMessage
-    }
-  ],
-  temperature: 0.3,
-  max_tokens: 300,
-  top_p: 1,
-  stream: false
-});
+    const completion = await groq.chat.completions.create({
+      model: "llama3-70b-8192",
+      messages: [
+        {
+          role: "system",
+          content:
+            "Você é ASLA, assistente corporativa da Ascendant. Seja clara, objetiva e profissional."
+        },
+        {
+          role: "user",
+          content: userMessage
+        }
+      ]
+    });
 
+    return res.json({
+      reply: completion.choices[0].message.content
+    });
 
-    res.json({ reply: completion.choices[0].message.content });
+  } catch (error) {
+    console.error("======== ERRO GROQ REAL ========");
+    console.error(error);
+    console.error("================================");
 
-  } catch (err) {
-    console.error("ASLA ERRO:", err);
-    res.json({ reply: "Erro ao processar a ASLA." });
+    return res.json({
+      reply: "Erro ao processar a ASLA.",
+      error: String(error)  // <-- retorna o erro real
+    });
   }
 });
 
-// Render dynamic port
+// =====================
+// RENDER PORT
+// =====================
 const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => console.log("ASLA API ativa na porta " + PORT));
-console.log("VERSAO EXECUTADA: ASLA-BUILD-77");
+app.listen(PORT, () => {
+  console.log("ASLA API ativa na porta " + PORT);
+  console.log("VERSAO EXECUTADA: ASLA-BUILD-DEBUG-FINAL");
+});
