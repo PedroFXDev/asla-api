@@ -24,15 +24,25 @@ app.post("/asla", async (req, res) => {
   try {
     const userMessage = req.body.message || "";
 
-    const completion = await groq.chat.completions.create({
-      model: "llama3-8b-8192",
-      messages: [
-        { role: "system", content: "Você é a ASLA, assistente corporativa da Ascendant." },
-        { role: "user", content: userMessage }
-      ],
-      temperature: 0.6,
-      max_tokens: 300
-    });
+   const completion = await groq.chat.completions.create({
+  model: "llama3-8b-8192",
+  messages: [
+    {
+      role: "system",
+      content:
+        "Você é ASLA, a assistente operacional da Ascendant. Responda de forma profissional e clara."
+    },
+    {
+      role: "user",
+      content: userMessage
+    }
+  ],
+  temperature: 0.3,
+  max_tokens: 300,
+  top_p: 1,
+  stream: false
+});
+
 
     res.json({ reply: completion.choices[0].message.content });
 
