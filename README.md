@@ -1,8 +1,9 @@
 # ASLA API
+API da assistente ASLA rodando no Render.
 
-Deploy no Render  
-Endpoint: POST /asla  
-Body: { "message": "Olá" }
+Endpoints:
+GET / → status
+POST /asla → recebe mensagem
 
-Variável necessária:
-- GROQ_KEY
+Variáveis:
+GROQ_KEY
