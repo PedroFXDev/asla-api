@@ -21,19 +21,19 @@ app.post("/asla", async (req, res) => {
         const r = await client.chat.completions.create({
             model: "llama3-70b-8192",
             messages: [
-                { role: "system", content: "Você é a ASLA, IA corporativa da Ascendant. Seja objetiva e clara." },
+                { role: "system", content: "Você é a ASLA, IA corporativa da Ascendant." },
                 { role: "user", content: message }
             ]
         });
 
         res.json({ reply: r.choices[0].message.content });
 
-    } catch (error) {
-        console.log(error);
-        res.json({ reply: "Erro ao processar requisição da ASLA." });
+    } catch (err) {
+        console.error(err);
+        res.json({ reply: "Erro ao processar a ASLA." });
     }
 });
 
-app.listen(10000, () => {
-    console.log("ASLA API rodando na porta 10000");
-});
+// CORREÇÃO PARA O RENDER
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log("ASLA API rodando na porta " + PORT));
