@@ -38,7 +38,7 @@ app.post("/asla", async (req, res) => {
         }
       ],
       max_tokens: 2500,
-      temperature: 0.8:
+      temperature: 0.5
     });
 
     res.json({
