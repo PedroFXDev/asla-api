@@ -37,7 +37,7 @@ app.post("/asla", async (req, res) => {
           content: userMessage
         }
       ],
-      max_tokens: 2000,
+      max_tokens: 0,
       temperature: 0.5
     });
 
@@ -51,7 +51,7 @@ app.post("/asla", async (req, res) => {
     console.error("================================");
 
     res.json({
-      reply: "Erro ao processar a ASLA.",
+      reply: "Erro ao processar a ASLA. Error #101",
       error: String(error)
     });
   }
