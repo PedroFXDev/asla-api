@@ -37,8 +37,8 @@ app.post("/asla", async (req, res) => {
           content: userMessage
         }
       ],
-      max_tokens: 0,
-      temperature: 0.5
+      max_tokens: 2500,
+      temperature: 0.8
     });
 
     res.json({
